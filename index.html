@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AlertAhora</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{--r:#D72638;--rd:#A81C28;--n:#0A0A0A;--g1:#141414;--g2:#1E1E1E;--g3:#2A2A2A;--g4:#3A3A3A;--tx:#F2F2F2;--t2:#AAAAAA;--t3:#666;--vd:#00C48C;--am:#FFD60A;--az:#3A86FF;}
+html,body{width:100%;height:100%;background:var(--n);color:var(--tx);font-family:Arial,Helvetica,sans-serif;overflow:hidden;}
+button{font-family:Arial,Helvetica,sans-serif;cursor:pointer;border:none;outline:none;background:none;}
+input,select,textarea{font-family:Arial,Helvetica,sans-serif;outline:none;border:none;background:none;color:var(--tx);}
+
+/* PANTALLAS - usa display block/none, sin transforms */
+.P{position:fixed;top:0;left:0;right:0;bottom:0;display:none;flex-direction:column;background:var(--n);overflow:hidden;}
+.P.A{display:-webkit-flex;display:flex;}
+
+/* SPLASH */
+#SP{-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;background:#0A0A0A;z-index:100;}
+@keyframes GR{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg);}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg);}}
+.spr{width:64px;height:64px;border-radius:50%;border:3px solid #2A2A2A;border-top-color:#D72638;-webkit-animation:GR 1s linear infinite;animation:GR 1s linear infinite;margin-bottom:22px;}
+.slg{font-size:34px;font-weight:900;margin-bottom:5px;}
+.slg b{color:#D72638;}
+.ssb{font-size:11px;color:#666;margin-bottom:32px;letter-spacing:2px;}
+.sbw{width:180px;height:3px;background:#2A2A2A;border-radius:2px;overflow:hidden;margin-bottom:9px;}
+.sb{height:3px;width:0;background:#D72638;border-radius:2px;}
+.sms{font-size:12px;color:#666;min-height:16px;}
+
+/* SCROLL */
+.SC{-webkit-flex:1;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+
+/* LOGIN */
+#LG{overflow-y:auto;}
+.lh{background:linear-gradient(160deg,#140407,#0A0A0A);padding:44px 22px 26px;text-align:center;border-bottom:1px solid #2A2A2A;-webkit-flex-shrink:0;flex-shrink:0;}
+.ll{font-size:26px;font-weight:900;margin-bottom:4px;}
+.ll b{color:#D72638;}
+.lt{font-size:11px;color:#666;}
+.lb{padding:20px 20px 44px;}
+.C{margin-bottom:13px;}
+.C label{display:block;font-size:12px;color:#AAAAAA;margin-bottom:5px;font-weight:700;}
+.C input,.C select{width:100%;padding:12px 13px;background:#1E1E1E;border:1.5px solid #2A2A2A;border-radius:8px;font-size:14px;color:#F2F2F2;-webkit-appearance:none;}
+.C select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23666' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;background-color:#1E1E1E;}
+.C select option{background:#1E1E1E;color:#F2F2F2;}
+.pl{font-size:12px;color:#AAAAAA;font-weight:700;margin-bottom:9px;}
+.pd{display:-webkit-flex;display:flex;gap:12px;-webkit-justify-content:center;justify-content:center;margin-bottom:13px;}
+.dot{width:13px;height:13px;border-radius:50%;background:#2A2A2A;border:2px solid #3A3A3A;}
+.dot.ON{background:#D72638;border-color:#D72638;}
+.tk{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:250px;margin:0 auto 17px;}
+.t{height:50px;border-radius:8px;background:#1E1E1E;border:1px solid #2A2A2A;color:#F2F2F2;font-size:17px;font-weight:700;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;}
+.t:active{background:#2A2A2A;}
+.BM{width:100%;padding:14px;border-radius:14px;background:#D72638;color:#fff;font-size:15px;font-weight:700;letter-spacing:.5px;}
+.BM:active{opacity:.85;}
+.la{text-align:center;margin-top:12px;font-size:13px;color:#666;}
+.la span{color:#D72638;font-weight:700;}
+.TW{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;padding:9px 0;}
+.TL{font-size:13px;color:#AAAAAA;}
+.SW{position:relative;width:42px;height:24px;}
+.SW input{opacity:0;width:0;height:0;}
+.SL{position:absolute;top:0;left:0;right:0;bottom:0;background:#2A2A2A;border-radius:12px;cursor:pointer;-webkit-transition:.3s;transition:.3s;}
+.SL:before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;-webkit-transition:.3s;transition:.3s;}
+.SW input:checked+.SL{background:#D72638;}
+.SW input:checked+.SL:before{-webkit-transform:translateX(18px);transform:translateX(18px);}
+
+/* HEADER */
+.HD{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;padding:13px 16px 11px;background:#141414;border-bottom:1px solid #2A2A2A;-webkit-flex-shrink:0;flex-shrink:0;}
+.HL{font-size:16px;font-weight:900;}
+.HL b{color:#D72638;}
+.HT{font-size:10px;color:#AAAAAA;background:#2A2A2A;padding:3px 10px;border-radius:20px;}
+.HB{width:33px;height:33px;border-radius:50%;background:#2A2A2A;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;position:relative;font-size:16px;}
+.BD{position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:#D72638;border:1.5px solid #141414;display:none;}
+.BD.ON{display:block;}
+
+/* BOTTOMNAV */
+.BN{display:-webkit-flex;display:flex;background:#141414;border-top:1px solid #2A2A2A;-webkit-flex-shrink:0;flex-shrink:0;}
+.NB{-webkit-flex:1;flex:1;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;padding:9px 0 7px;gap:2px;color:#666;font-size:10px;font-weight:700;}
+.NB.ON{color:#D72638;}
+.NI{font-size:18px;line-height:1;}
+
+/* MAPA placeholder */
+.MP{-webkit-flex-shrink:0;flex-shrink:0;background:#1A2330;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;-webkit-flex-direction:column;flex-direction:column;gap:8px;color:#666;font-size:12px;}
+#MH{height:230px;}
+#MPL{height:170px;}
+#MSOS2{height:120px;border-radius:8px;overflow:hidden;}
+@keyframes PD{0%,100%{opacity:1;}50%{opacity:.3;}}
+.mpd{width:10px;height:10px;border-radius:50%;background:#D72638;-webkit-animation:PD 1.5s infinite;animation:PD 1.5s infinite;}
+
+/* SOS */
+.SW2{display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;padding:15px 0 11px;}
+@keyframes SR{0%,100%{box-shadow:0 0 0 0 rgba(215,38,56,.35);}60%{box-shadow:0 0 0 16px transparent;}}
+.SB{width:112px;height:112px;border-radius:50%;background:linear-gradient(135deg,#D72638,#A81C28);color:#fff;font-size:18px;font-weight:900;-webkit-animation:SR 2s ease-in-out infinite;animation:SR 2s ease-in-out infinite;border:4px solid rgba(255,255,255,.12);display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;gap:2px;-webkit-user-select:none;user-select:none;}
+.SB:active{opacity:.9;}
+.SH{font-size:10px;color:#666;margin-top:7px;text-align:center;}
+
+/* STATS */
+.SR3{display:-webkit-flex;display:flex;gap:9px;padding:0 16px 12px;}
+.ST{-webkit-flex:1;flex:1;background:#1E1E1E;border:1px solid #2A2A2A;border-radius:8px;padding:9px;text-align:center;}
+.SN{font-size:19px;font-weight:900;}
+.SN.R{color:#D72638;}.SN.V{color:#00C48C;}.SN.A{color:#FFD60A;}
+.SL2{font-size:10px;color:#AAAAAA;margin-top:1px;}
+
+/* LISTA */
+.SC2{font-size:11px;font-weight:700;color:#666;letter-spacing:.5px;text-transform:uppercase;padding:0 16px 7px;}
+.AI{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid #2A2A2A;}
+.AI:active{background:#1E1E1E;}
+.AD{width:9px;height:9px;border-radius:50%;-webkit-flex-shrink:0;flex-shrink:0;}
+.AD.R{background:#D72638;}.AD.V{background:#00C48C;}.AD.Y{background:#FFD60A;}
+.AF{-webkit-flex:1;flex:1;min-width:0;}
+.AT{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.AM{font-size:11px;color:#AAAAAA;margin-top:1px;}
+.AB{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.AB.R{background:rgba(215,38,56,.15);color:#D72638;}
+.AB.V{background:rgba(0,196,140,.12);color:#00C48C;}
+.AB.Y{background:rgba(255,214,10,.12);color:#FFD60A;}
+
+/* MODAL SOS */
+#MSM{position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;background:rgba(0,0,0,.93);display:none;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;gap:14px;padding:20px;}
+#MSM.ON{display:-webkit-flex;display:flex;}
+@keyframes RA{0%,100%{-webkit-transform:scale(1);transform:scale(1);}50%{-webkit-transform:scale(1.1);transform:scale(1.1);}}
+.SR4{width:82px;height:82px;border-radius:50%;background:rgba(215,38,56,.18);border:3px solid #D72638;-webkit-animation:RA 1s ease-in-out infinite;animation:RA 1s ease-in-out infinite;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;font-size:28px;}
+.SMT{font-size:19px;font-weight:900;color:#D72638;text-align:center;}
+.SMS{font-size:13px;color:#AAAAAA;text-align:center;max-width:260px;line-height:1.5;}
+.BC{width:100%;max-width:310px;padding:15px;border-radius:14px;background:#D72638;color:#fff;font-size:15px;font-weight:700;}
+.BCA{width:100%;max-width:310px;padding:13px;border-radius:14px;background:#1E1E1E;border:1px solid #2A2A2A;color:#AAAAAA;font-size:14px;}
+.CDT{font-size:11px;color:#666;text-align:center;}
+
+/* PANEL */
+.PH{background:#D72638;padding:13px 16px;font-size:15px;font-weight:900;text-align:center;-webkit-flex-shrink:0;flex-shrink:0;}
+.PC{margin:12px 16px;background:#1E1E1E;border:1px solid #2A2A2A;border-radius:14px;padding:13px;}
+.PL{font-size:10px;color:#D72638;font-weight:700;letter-spacing:1px;margin-bottom:3px;}
+.PV{font-size:16px;font-weight:900;}
+.TR{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:6px;margin-top:6px;font-size:12px;color:#AAAAAA;}
+.TD{width:7px;height:7px;border-radius:50%;background:#D72638;-webkit-animation:PD 1s infinite;animation:PD 1s infinite;}
+.RL{margin:0 16px 12px;}
+.RI{display:-webkit-flex;display:flex;gap:9px;padding:9px 0;border-bottom:1px solid #2A2A2A;}
+.RA{width:28px;height:28px;border-radius:50%;background:#2A2A2A;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;font-size:11px;font-weight:700;color:#AAAAAA;-webkit-flex-shrink:0;flex-shrink:0;}
+.RN{font-size:13px;font-weight:700;}
+.RM{font-size:11px;color:#AAAAAA;margin-top:1px;}
+.RH{font-size:10px;color:#666;margin-top:2px;}
+.PB{display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;gap:8px;padding:0 16px 22px;}
+.B9{padding:13px;border-radius:14px;background:#D72638;color:#fff;font-size:13px;font-weight:700;}
+.BCT{padding:13px;border-radius:14px;background:#1E1E1E;border:1px solid #2A2A2A;color:#F2F2F2;font-size:13px;font-weight:700;}
+.BOK{padding:13px;border-radius:14px;background:rgba(0,196,140,.1);border:1px solid #00C48C;color:#00C48C;font-size:13px;font-weight:700;}
+
+/* ALERTAS */
+.FL{display:-webkit-flex;display:flex;gap:7px;padding:12px 16px 7px;overflow-x:auto;}
+.FB{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;background:#1E1E1E;border:1px solid #2A2A2A;color:#AAAAAA;white-space:nowrap;}
+.FB.ON{background:#D72638;border-color:#D72638;color:#fff;}
+.AC{background:#1E1E1E;border:1px solid #2A2A2A;border-radius:14px;padding:12px;margin-bottom:8px;}
+.AC:active{border-color:#D72638;}
+.ACTOP{display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;-webkit-align-items:flex-start;align-items:flex-start;gap:7px;}
+.ACTI{font-size:13px;font-weight:700;}
+.ACMT{font-size:11px;color:#AAAAAA;margin-top:4px;}
+.ACZN{font-size:10px;color:#666;margin-top:4px;}
+.ACDSC{font-size:11px;color:#AAAAAA;margin-top:6px;line-height:1.5;}
+
+/* REPORTAR */
+.FB3{padding:18px;}
+.C textarea{width:100%;padding:12px 13px;background:#1E1E1E;border:1.5px solid #2A2A2A;border-radius:8px;color:#F2F2F2;font-size:13px;resize:none;min-height:85px;}
+.CC{font-size:10px;color:#666;text-align:right;margin-top:3px;}
+.FZ{width:100%;height:108px;border-radius:8px;background:#1E1E1E;border:2px dashed #2A2A2A;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;gap:5px;color:#666;font-size:12px;position:relative;overflow:hidden;}
+.FZ img{position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;object-fit:cover;}
+
+/* PERFIL */
+.PHR{background:linear-gradient(160deg,#140407,#0A0A0A);padding:26px 22px 20px;text-align:center;border-bottom:1px solid #2A2A2A;}
+.PAV{width:64px;height:64px;border-radius:50%;background:#D72638;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin:0 auto 9px;}
+.PN{font-size:16px;font-weight:900;}
+.PZ{font-size:12px;color:#AAAAAA;margin-top:3px;}
+.PI{font-size:10px;color:#666;margin-top:4px;background:#2A2A2A;padding:3px 11px;border-radius:20px;display:inline-block;}
+.PBS{padding:16px;}
+.PSC{margin-bottom:17px;}
+.PST{font-size:10px;color:#666;font-weight:700;letter-spacing:1px;margin-bottom:9px;text-transform:uppercase;}
+.PRW{display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:space-between;justify-content:space-between;padding:10px 0;border-bottom:1px solid #2A2A2A;}
+.PRL{font-size:13px;color:#F2F2F2;}
+.PRV{font-size:13px;color:#AAAAAA;}
+.BLG{width:100%;padding:12px;border-radius:14px;background:#1E1E1E;border:1px solid #2A2A2A;color:#D72638;font-size:13px;font-weight:700;margin-top:5px;}
+.CRD{text-align:center;padding:16px;font-size:10px;color:#666;line-height:1.9;}
+
+/* MODAL DETALLE */
+.OV{position:fixed;top:0;left:0;right:0;bottom:0;z-index:300;background:rgba(0,0,0,.8);display:none;-webkit-align-items:flex-end;align-items:flex-end;}
+.OV.ON{display:-webkit-flex;display:flex;}
+.MB{width:100%;background:#141414;border-radius:20px 20px 0 0;padding:20px;max-height:76vh;overflow-y:auto;border-top:1px solid #2A2A2A;}
+.MHN{width:32px;height:4px;background:#3A3A3A;border-radius:2px;margin:0 auto 13px;}
+.MT{font-size:15px;font-weight:900;margin-bottom:13px;}
+.MR{display:-webkit-flex;display:flex;-webkit-justify-content:space-between;justify-content:space-between;padding:7px 0;border-bottom:1px solid #2A2A2A;font-size:13px;}
+.ML{color:#AAAAAA;}
+.BCM{width:100%;padding:11px;border-radius:14px;background:#1E1E1E;border:1px solid #2A2A2A;color:#F2F2F2;font-size:13px;margin-top:13px;}
+.BRS{width:100%;padding:11px;border-radius:14px;background:rgba(0,196,140,.1);border:1px solid #00C48C;color:#00C48C;font-size:13px;margin-top:7px;font-weight:700;}
+
+/* TOAST */
+.TS{position:fixed;bottom:72px;left:50%;-webkit-transform:translateX(-50%) translateY(14px);transform:translateX(-50%) translateY(14px);background:#141414;border:1px solid #2A2A2A;color:#F2F2F2;font-size:12px;padding:10px 18px;border-radius:14px;z-index:500;opacity:0;-webkit-transition:opacity .3s,-webkit-transform .3s;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;max-width:88%;text-align:center;}
+.TS.ON{opacity:1;-webkit-transform:translateX(-50%) translateY(0);transform:translateX(-50%) translateY(0);}
+.TS.OK{border-color:#00C48C;color:#00C48C;}
+.TS.ER{border-color:#D72638;color:#D72638;}
+.EMP{display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;padding:36px 18px;color:#666;text-align:center;gap:8px;}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="SP" class="P A">
+  <div class="spr"></div>
+  <div class="slg">Alerta<b>Ahora</b></div>
+  <div class="ssb">SISTEMA DE ALERTA COMUNITARIA</div>
+  <div class="sbw"><div class="sb" id="SB" style="width:0;transition:width 2s linear;"></div></div>
+  <div class="sms" id="SMS">Iniciando...</div>
+</div>
+
+<!-- LOGIN -->
+<div id="LG" class="P">
+  <div class="lh">
+    <div class="ll">Alerta<b>Ahora</b></div>
+    <div class="lt">Paraguaná · Fe y Alegría · Falcón</div>
+  </div>
+  <div class="lb">
+    <div class="C"><label>Nombre completo</label><input type="text" id="LN" placeholder="Ej: Ana Rodríguez" autocomplete="off"></div>
+    <div class="C"><label>Cédula o ID</label><input type="text" id="LC" placeholder="Ej: V-12345678" autocomplete="off"></div>
+    <div class="C">
+      <label>Zona / Sector</label>
+      <select id="LZ">
+        <option value="">Seleccionar zona...</option>
+        <option>Zona Norte</option><option>Zona Sur</option>
+        <option>Zona Central</option><option>Zona Este</option><option>Zona Oeste</option>
+      </select>
+    </div>
+    <div id="REX" style="display:none;">
+      <div class="C"><label>Teléfono</label><input type="tel" id="LTE" placeholder="0424-1234567"></div>
+      <div class="C"><label>Contacto emergencia</label><input type="text" id="LCE" placeholder="Juan · 0412-9876543"></div>
+    </div>
+    <div class="pl">PIN de 4 dígitos</div>
+    <div class="pd">
+      <div class="dot" id="D0"></div><div class="dot" id="D1"></div>
+      <div class="dot" id="D2"></div><div class="dot" id="D3"></div>
+    </div>
+    <div class="tk">
+      <button class="t" onclick="PK('1')">1</button><button class="t" onclick="PK('2')">2</button><button class="t" onclick="PK('3')">3</button>
+      <button class="t" onclick="PK('4')">4</button><button class="t" onclick="PK('5')">5</button><button class="t" onclick="PK('6')">6</button>
+      <button class="t" onclick="PK('7')">7</button><button class="t" onclick="PK('8')">8</button><button class="t" onclick="PK('9')">9</button>
+      <button class="t" style="opacity:0;pointer-events:none;"></button>
+      <button class="t" onclick="PK('0')">0</button>
+      <button class="t" onclick="PBK()" style="font-size:15px;">⌫</button>
+    </div>
+    <button class="BM" id="BLG" onclick="doLogin()">INGRESAR</button>
+    <div class="la">¿Primera vez? <span onclick="TRG()"><span id="RLK">Registrarse</span></span></div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="HM" class="P">
+  <div class="HD">
+    <div><div class="HL">Alerta<b>Ahora</b></div><div id="HSAL" style="font-size:11px;color:#AAAAAA;margin-top:1px;"></div></div>
+    <div style="display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:8px;">
+      <div id="HZON" class="HT"></div>
+      <div class="HB" onclick="IR('AL')">🔔<div class="BD" id="BDOT"></div></div>
+    </div>
+  </div>
+  <div class="MP" id="MH"><div class="mpd"></div><span>Cargando mapa...</span></div>
+  <div class="SW2">
+    <button class="SB" id="SOSB"
+      ontouchstart="SS(event)" ontouchend="SE()" ontouchcancel="SE()"
+      onmousedown="SS(event)" onmouseup="SE()" onmouseleave="SE()">
+      ¡SOS!<span style="font-size:9px;opacity:.75;font-weight:400;">MANTÉN 2s</span>
+    </button>
+    <div class="SH">Mantén presionado 2 segundos para alertar</div>
+  </div>
+  <div class="SR3" id="HST"></div>
+  <div class="SC">
+    <div class="SC2">ALERTAS RECIENTES</div>
+    <div id="HLS"></div>
+  </div>
+  <div class="BN">
+    <button class="NB ON" onclick="IR('HM')"><span class="NI">🏠</span>Inicio</button>
+    <button class="NB" onclick="IR('AL')"><span class="NI">🔔</span>Alertas</button>
+    <button class="NB" onclick="IR('RP')"><span class="NI">📋</span>Reportar</button>
+    <button class="NB" onclick="IR('PF')"><span class="NI">👤</span>Perfil</button>
+  </div>
+</div>
+
+<!-- MODAL SOS -->
+<div id="MSM">
+  <div class="SR4">🆘</div>
+  <div class="SMT">¡ALERTA DE SEGURIDAD!</div>
+  <div class="SMS2" style="font-size:13px;color:#AAAAAA;text-align:center;max-width:260px;line-height:1.5;">Enviando tu ubicación a contactos de emergencia y a la red comunitaria.</div>
+  <div id="MSOS2" style="width:100%;max-width:310px;"></div>
+  <button class="BC" onclick="CONF()">CONFIRMAR SOS</button>
+  <button class="BCA" onclick="CANC()">CANCELAR ALERTA</button>
+  <div class="CDT" id="CDT">Quedan: 0:08</div>
+</div>
+
+<!-- PANEL -->
+<div id="PNL" class="P">
+  <div class="PH">Panel de Alerta</div>
+  <div class="SC">
+    <div style="margin:12px 16px;border-radius:14px;overflow:hidden;"><div id="MPL" class="MP" style="height:170px;"><div class="mpd"></div></div></div>
+    <div class="PC">
+      <div class="PL">ALERTA ACTIVA</div>
+      <div class="PV" id="PTYP">—</div>
+      <div class="TR"><div class="TD"></div>Alertando...<span id="PTMR" style="margin-left:auto;font-weight:900;color:#D72638;">0:00</span></div>
+      <div style="font-size:10px;color:#666;margin-top:5px;" id="PLOC"></div>
+    </div>
+    <div class="SC2" style="padding-top:0;">RESPUESTAS DE LA RED</div>
+    <div class="RL" id="RLS"></div>
+    <div class="PB">
+      <button class="B9" onclick="L911()">📞 Llamar Emergencias (911)</button>
+      <button class="BCT" onclick="LCNT()">👤 Llamar Contacto de Emergencia</button>
+      <button class="BOK" onclick="FIN()">✅ Finalizar — Estoy a Salvo</button>
+    </div>
+  </div>
+</div>
+
+<!-- ALERTAS -->
+<div id="AL" class="P">
+  <div class="HD">
+    <div class="HL">Alerta<b>Ahora</b></div>
+    <button onclick="RALS();TT('Lista actualizada')" style="background:#1E1E1E;border:1px solid #2A2A2A;color:#F2F2F2;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;">↻ Actualizar</button>
+  </div>
+  <div class="SR3" id="ALST"></div>
+  <div class="FL">
+    <button class="FB ON" onclick="SF('t',this)">Todas</button>
+    <button class="FB" onclick="SF('z',this)">Mi Zona</button>
+    <button class="FB" onclick="SF('a',this)">Activas</button>
+    <button class="FB" onclick="SF('r',this)">Resueltas</button>
+  </div>
+  <div class="SC"><div id="ALSL" style="padding:0 16px 18px;"></div></div>
+  <div class="BN">
+    <button class="NB" onclick="IR('HM')"><span class="NI">🏠</span>Inicio</button>
+    <button class="NB ON" onclick="IR('AL')"><span class="NI">🔔</span>Alertas</button>
+    <button class="NB" onclick="IR('RP')"><span class="NI">📋</span>Reportar</button>
+    <button class="NB" onclick="IR('PF')"><span class="NI">👤</span>Perfil</button>
+  </div>
+</div>
+
+<!-- REPORTAR -->
+<div id="RP" class="P">
+  <div class="HD"><div class="HL">Alerta<b>Ahora</b></div><div class="HT">Nuevo Reporte</div></div>
+  <div class="SC">
+    <div class="FB3">
+      <div class="C">
+        <label>Tipo de incidente</label>
+        <select id="RT">
+          <option value="">Seleccionar tipo...</option>
+          <option>Robo / Atraco</option><option>Violencia Doméstica</option>
+          <option>Violencia de Género</option><option>Incendio</option>
+          <option>Accidente</option><option>Persona Sospechosa</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="C">
+        <label>Descripción</label>
+        <textarea id="RD" placeholder="Describe lo que ocurre..." maxlength="280" oninput="document.getElementById('RCC').textContent=this.value.length+' / 280'"></textarea>
+        <div class="CC" id="RCC">0 / 280</div>
+      </div>
+      <div class="C">
+        <label>Zona</label>
+        <select id="RZ">
+          <option value="">Seleccionar zona...</option>
+          <option>Zona Norte</option><option>Zona Sur</option>
+          <option>Zona Central</option><option>Zona Este</option><option>Zona Oeste</option>
+        </select>
+      </div>
+      <div class="TW">
+        <span class="TL">🔒 Reporte anónimo</span>
+        <label class="SW"><input type="checkbox" id="RAn" checked><span class="SL"></span></label>
+      </div>
+      <div class="C" style="margin-top:10px;">
+        <label>Foto (opcional)</label>
+        <div class="FZ" id="FZN" onclick="document.getElementById('FZF').click()">
+          <span style="font-size:22px;">📷</span><span>Tocar para adjuntar foto</span>
+          <input type="file" id="FZF" accept="image/*" style="display:none;" onchange="PVF(this)">
+        </div>
+      </div>
+      <button class="BM" style="margin-top:9px;" onclick="ENVR()">ENVIAR REPORTE</button>
+    </div>
+  </div>
+  <div class="BN">
+    <button class="NB" onclick="IR('HM')"><span class="NI">🏠</span>Inicio</button>
+    <button class="NB" onclick="IR('AL')"><span class="NI">🔔</span>Alertas</button>
+    <button class="NB ON" onclick="IR('RP')"><span class="NI">📋</span>Reportar</button>
+    <button class="NB" onclick="IR('PF')"><span class="NI">👤</span>Perfil</button>
+  </div>
+</div>
+
+<!-- PERFIL -->
+<div id="PF" class="P">
+  <div class="HD"><div class="HL">Alerta<b>Ahora</b></div><div class="HT">Mi Perfil</div></div>
+  <div class="SC">
+    <div class="PHR">
+      <div class="PAV" id="PAV">?</div>
+      <div class="PN" id="PNM">—</div>
+      <div class="PZ" id="PZN">—</div>
+      <div class="PI" id="PIDD">ID: —</div>
+    </div>
+    <div class="PBS">
+      <div class="PSC">
+        <div class="PST">Información</div>
+        <div class="PRW"><span class="PRL">Zona</span><span class="PRV" id="PIZO">—</span></div>
+        <div class="PRW"><span class="PRL">Teléfono</span><span class="PRV" id="PITEL">—</span></div>
+        <div class="PRW"><span class="PRL">Contacto emergencia</span><span class="PRV" id="PICE" style="font-size:11px;max-width:54%;text-align:right;">—</span></div>
+        <div class="PRW"><span class="PRL">Mis reportes</span><span class="PRV" id="PIREP" style="font-weight:900;color:#D72638;">0</span></div>
+      </div>
+      <div class="PSC">
+        <div class="PST">Preferencias</div>
+        <div class="TW">
+          <span class="TL">Alertas de otras zonas</span>
+          <label class="SW"><input type="checkbox" id="PFOZ" onchange="GPRF()"><span class="SL"></span></label>
+        </div>
+      </div>
+      <button class="BLG" onclick="LOUT()">Cerrar Sesión</button>
+      <div class="CRD">AlertAhora v4.0 · Technovation Girls Venezuela<br>UEC Padre Víctor Iriarte "Fe y Alegría"<br>Paraguaná, Falcón · InfoAlix LATAM · 2026</div>
+    </div>
+  </div>
+  <div class="BN">
+    <button class="NB" onclick="IR('HM')"><span class="NI">🏠</span>Inicio</button>
+    <button class="NB" onclick="IR('AL')"><span class="NI">🔔</span>Alertas</button>
+    <button class="NB" onclick="IR('RP')"><span class="NI">📋</span>Reportar</button>
+    <button class="NB ON" onclick="IR('PF')"><span class="NI">👤</span>Perfil</button>
+  </div>
+</div>
+
+<!-- MODAL DETALLE -->
+<div class="OV" id="OVD" onclick="if(event.target===this)this.classList.remove('ON')">
+  <div class="MB">
+    <div class="MHN"></div>
+    <div class="MT" id="MDT">Detalle</div>
+    <div id="MDB"></div>
+    <button class="BCM" onclick="document.getElementById('OVD').classList.remove('ON')">Cerrar</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="TS" id="TST"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   STORAGE — wrapper seguro para localStorage
+   En algunos WebViews de Android lanza SecurityError
+   al acceder a localStorage desde file:// o URLs externas.
+   Esta capa usa try/catch en TODAS las operaciones.
+═══════════════════════════════════════════════════════ */
+var MEM = {}; // fallback en memoria si localStorage falla
+var USE_LS = false;
+try {
+  localStorage.setItem('__t','1');
+  localStorage.removeItem('__t');
+  USE_LS = true;
+} catch(e) { USE_LS = false; }
+
+function SG(k) {
+  try {
+    if (USE_LS) return localStorage.getItem(k);
+    return MEM[k] !== undefined ? MEM[k] : null;
+  } catch(e) { return MEM[k] !== undefined ? MEM[k] : null; }
+}
+function SS2(k,v) {
+  try {
+    if (USE_LS) localStorage.setItem(k, v);
+    MEM[k] = v;
+  } catch(e) { MEM[k] = v; }
+}
+function SR2(k) {
+  try { if (USE_LS) localStorage.removeItem(k); } catch(e) {}
+  delete MEM[k];
+}
+
+/* ═══ BASE DE DATOS ═══ */
+var DB = {
+  _g: function(t) {
+    try { return JSON.parse(SG('aa_'+t) || '[]'); } catch(e) { return []; }
+  },
+  _s: function(t,d) {
+    try { SS2('aa_'+t, JSON.stringify(d)); } catch(e) {}
+  },
+  id: function(t) {
+    return t+'_'+Date.now()+'_'+Math.floor(Math.random()*9999);
+  },
+  ins: function(t,o) {
+    var d=this._g(t), item={id:this.id(t)};
+    for(var k in o) if(o.hasOwnProperty(k)) item[k]=o[k];
+    d.push(item); this._s(t,d); return item;
+  },
+  sel: function(t,f) {
+    var d=this._g(t);
+    if(!f) return d;
+    var r=[];
+    for(var i=0;i<d.length;i++) {
+      var ok=true;
+      for(var k in f) if(f.hasOwnProperty(k)&&d[i][k]!==f[k]){ok=false;break;}
+      if(ok) r.push(d[i]);
+    }
+    return r;
+  },
+  upd: function(t,id,c) {
+    var d=this._g(t);
+    for(var i=0;i<d.length;i++) {
+      if(d[i].id===id) {
+        for(var k in c) if(c.hasOwnProperty(k)) d[i][k]=c[k];
+        this._s(t,d); return true;
+      }
+    }
+    return false;
+  },
+  cnt: function(t,f) { return this.sel(t,f).length; },
+  init: function() {
+    if(SG('aa_ok')) return;
+    var now=Date.now();
+    var demos=[
+      {tipo:'SOS',descripcion:'Necesito ayuda urgente',zona:'Zona Norte',lat:11.990,lon:-70.220,estado:'activa',es_anonimo:false,uid:'demo',timestamp:now-600000},
+      {tipo:'Robo / Atraco',descripcion:'Robo frente a la bodega',zona:'Zona Central',lat:11.981,lon:-70.215,estado:'resuelta',es_anonimo:true,uid:'demo',timestamp:now-2700000},
+      {tipo:'Violencia Doméstica',descripcion:'Gritos y golpes en el apartamento',zona:'Zona Sur',lat:11.970,lon:-70.208,estado:'activa',es_anonimo:true,uid:'demo',timestamp:now-7200000},
+      {tipo:'Incendio',descripcion:'Incendio en galpón abandonado',zona:'Zona Este',lat:11.985,lon:-70.195,estado:'activa',es_anonimo:false,uid:'demo',timestamp:now-1200000},
+      {tipo:'Persona Sospechosa',descripcion:'Sujeto merodeando desde hace 1h',zona:'Zona Oeste',lat:11.975,lon:-70.235,estado:'activa',es_anonimo:true,uid:'demo',timestamp:now-300000}
+    ];
+    for(var i=0;i<demos.length;i++) this.ins('alertas',demos[i]);
+    SS2('aa_ok','1');
+  }
+};
+
+/* ═══ SESIÓN ═══ */
+var SES=null;
+try { var _s=SG('aa_ses'); if(_s) SES=JSON.parse(_s); } catch(e){ SES=null; }
+function saveSes(u){ SES=u; try{ SS2('aa_ses',JSON.stringify(u)); }catch(e){} }
+
+/* ═══ INIT — se ejecuta inmediatamente, sin esperar eventos ═══ */
+// Inicializar BD
+try { DB.init(); } catch(e){}
+
+// Arrancar splash — setTimeout es lo más confiable en MIT AI2
+var _sb = document.getElementById('SB');
+var _sm = document.getElementById('SMS');
+// Animar barra
+setTimeout(function(){
+  try{ if(_sb) _sb.style.width='100%'; }catch(e){}
+}, 80);
+// Avanzar mensaje
+setTimeout(function(){
+  try{ if(_sm) _sm.textContent = SES ? 'Cargando tu perfil...' : 'Listo'; }catch(e){}
+}, 1400);
+// NAVEGAR — 2.8s da tiempo suficiente para todo en MIT AI2
+setTimeout(function(){
+  try{
+    if(SES){ IR('HM'); }
+    else { mostrar('LG'); }
+  }catch(e){
+    // Si falla IR, forzar display directo
+    try{
+      document.getElementById('SP').style.display='none';
+      document.getElementById('LG').style.display='-webkit-flex';
+      document.getElementById('LG').style.display='flex';
+    }catch(e2){}
+  }
+}, 2800);
+
+/* ═══ NAVEGACIÓN ═══ */
+var IDS = ['SP','LG','HM','PNL','AL','RP','PF'];
+var VA = 'SP';
+var mapHome=null, mapPanel=null, mapSOS=null, MKRS=[], LEAF=false, LEAFL=false, LEAFCBS=[];
+var PF2=[11.9810,-70.2151];
+
+function mostrar(id){
+  for(var i=0;i<IDS.length;i++){
+    var e=document.getElementById(IDS[i]);
+    if(e){ e.classList.remove('A'); e.style.display='none'; }
+  }
+  var el=document.getElementById(id);
+  if(el){ el.style.display=''; el.classList.add('A'); }
+  VA=id;
+}
+
+function IR(dest){
+  mostrar(dest);
+  if(dest==='HM'){ RHM(); setTimeout(function(){ if(!mapHome) IHM(); else{ try{mapHome.invalidateSize(true);}catch(e){} refMK(); } },250); }
+  if(dest==='AL') RALS();
+  if(dest==='RP') PREP();
+  if(dest==='PF') RPERF();
+  if(dest==='PNL') setTimeout(function(){ if(!mapPanel) IPM(); else{ try{mapPanel.invalidateSize(true);}catch(e){} } },250);
+}
+
+/* ═══ LOGIN ═══ */
+var PIN='', REGM=false;
+function PK(n){ if(PIN.length>=4) return; PIN+=n; UPD(); }
+function PBK(){ PIN=PIN.slice(0,-1); UPD(); }
+function UPD(){
+  for(var i=0;i<4;i++){
+    var d=document.getElementById('D'+i);
+    if(d){ if(i<PIN.length) d.classList.add('ON'); else d.classList.remove('ON'); }
+  }
+}
+function TRG(){
+  REGM=!REGM;
+  document.getElementById('REX').style.display=REGM?'block':'none';
+  document.getElementById('RLK').textContent=REGM?'Ya tengo cuenta':'Registrarse';
+  document.getElementById('BLG').textContent=REGM?'REGISTRARSE':'INGRESAR';
+}
+function doLogin(){
+  var n=(document.getElementById('LN').value||'').trim();
+  var c=(document.getElementById('LC').value||'').trim();
+  var z=document.getElementById('LZ').value;
+  if(!n||!c||!z){ TT('Completa nombre, cédula y zona','ER'); return; }
+  if(PIN.length<4){ TT('Ingresa el PIN de 4 dígitos','ER'); return; }
+  var u;
+  if(REGM){
+    var tel=(document.getElementById('LTE').value||'').trim();
+    var ce=(document.getElementById('LCE').value||'').trim();
+    if(DB.sel('usuarios',{cedula:c}).length>0){ TT('Cédula ya registrada','ER'); return; }
+    u=DB.ins('usuarios',{nombre:n,cedula:c,zona:z,pin:PIN,telefono:tel,contacto_emergencia:ce,otras_zonas:false});
+  } else {
+    var found=DB.sel('usuarios',{cedula:c,pin:PIN});
+    u=found.length>0?found[0]:DB.ins('usuarios',{nombre:n,cedula:c,zona:z,pin:PIN,telefono:'',contacto_emergencia:'',otras_zonas:false});
+  }
+  saveSes(u);
+  TT('¡Bienvenido, '+n.split(' ')[0]+'!','OK');
+  setTimeout(function(){ IR('HM'); },700);
+}
+
+/* ═══ HOME ═══ */
+function RHM(){
+  if(!SES) return;
+  var e;
+  e=document.getElementById('HSAL'); if(e) e.textContent='Hola, '+SES.nombre.split(' ')[0]+'!';
+  e=document.getElementById('HZON'); if(e) e.textContent=SES.zona||'Sin zona';
+  var act=DB.cnt('alertas',{estado:'activa'});
+  e=document.getElementById('BDOT'); if(e){ if(act>0) e.classList.add('ON'); else e.classList.remove('ON'); }
+  var res=DB.cnt('alertas',{estado:'resuelta'}), tot=DB.sel('alertas').length;
+  e=document.getElementById('HST');
+  if(e) e.innerHTML='<div class="ST"><div class="SN R">'+act+'</div><div class="SL2">Activas</div></div>'+
+    '<div class="ST"><div class="SN V">'+res+'</div><div class="SL2">Resueltas</div></div>'+
+    '<div class="ST"><div class="SN A">'+tot+'</div><div class="SL2">Total</div></div>';
+  var als=DB.sel('alertas').sort(function(a,b){return b.timestamp-a.timestamp;}).slice(0,6);
+  e=document.getElementById('HLS'); if(!e) return;
+  if(!als.length){ e.innerHTML='<div class="EMP"><div style="font-size:32px;">✅</div><div>Sin alertas recientes</div></div>'; return; }
+  var h='';
+  for(var i=0;i<als.length;i++){
+    var a=als[i], dc=a.estado==='activa'?'R':a.estado==='resuelta'?'V':'Y';
+    h+='<div class="AI" onclick="VD(\''+a.id+'\')"><div class="AD '+dc+'"></div>'+
+       '<div class="AF"><div class="AT">'+a.tipo+'</div><div class="AM">'+a.zona+' · '+TR(a.timestamp)+'</div></div>'+
+       '<div class="AB '+dc+'">'+a.estado.toUpperCase()+'</div></div>';
+  }
+  e.innerHTML=h;
+}
+
+/* ═══ LEAFLET — carga diferida ═══ */
+function cargarL(cb){
+  if(LEAF){ cb(); return; }
+  LEAFCBS.push(cb);
+  if(LEAFL) return;
+  LEAFL=true;
+  var lnk=document.createElement('link');
+  lnk.rel='stylesheet'; lnk.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  document.head.appendChild(lnk);
+  var sc=document.createElement('script');
+  sc.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  sc.onload=function(){
+    LEAF=true;
+    for(var i=0;i<LEAFCBS.length;i++) try{LEAFCBS[i]();}catch(e){}
+    LEAFCBS=[];
+  };
+  sc.onerror=function(){
+    var sc2=document.createElement('script');
+    sc2.src='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js';
+    sc2.onload=function(){
+      LEAF=true;
+      for(var i=0;i<LEAFCBS.length;i++) try{LEAFCBS[i]();}catch(e){}
+      LEAFCBS=[];
+    };
+    document.head.appendChild(sc2);
+  };
+  document.head.appendChild(sc);
+}
+
+function mkMapa(divId,centro,zoom){
+  var el=document.getElementById(divId); if(!el) return null;
+  el.innerHTML=''; el.style.background='#1A2330';
+  var h=divId==='MH'?230:divId==='MPL'?170:120;
+  el.style.height=h+'px';
+  el.classList.remove('MP');
+  try{
+    var m=L.map(divId,{zoomControl:false,attributionControl:false,preferCanvas:true}).setView(centro,zoom);
+    var fbUsed=false;
+    var t1=L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,crossOrigin:false});
+    t1.on('tileerror',function(){
+      if(!fbUsed){ fbUsed=true; try{m.removeLayer(t1);}catch(e){}
+        L.tileLayer('https://a.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',{maxZoom:19}).addTo(m); }
+    });
+    t1.addTo(m);
+    return m;
+  }catch(e){ return null; }
+}
+
+function mkI(a){
+  var cls=a.tipo==='SOS'&&a.estado==='activa'?'mksos':a.estado==='resuelta'?'mkres':'mkrep';
+  return L.divIcon({className:'',html:'<div class="'+cls+'"></div>',iconSize:[16,16],iconAnchor:[8,8]});
+}
+function mkU(){ return L.divIcon({className:'',html:'<div style="width:14px;height:14px;border-radius:50%;background:#3A86FF;border:3px solid #fff;"></div>',iconSize:[14,14],iconAnchor:[7,7]}); }
+
+function IHM(){
+  cargarL(function(){
+    if(mapHome) return;
+    mapHome=mkMapa('MH',PF2,13);
+    if(!mapHome) return;
+    setTimeout(function(){
+      try{ mapHome.invalidateSize(true); refMK(); GPS(function(la,lo){
+        try{ L.marker([la,lo],{icon:mkU()}).addTo(mapHome).bindPopup('<b style="color:#F2F2F2">Mi ubicación</b>'); }catch(e){}
+      }); }catch(e){}
+    },500);
+    setInterval(function(){ if(VA==='HM'){ try{refMK(); RHM();}catch(e){} } },20000);
+  });
+}
+
+function refMK(){
+  if(!mapHome) return;
+  for(var i=0;i<MKRS.length;i++) try{MKRS[i].remove();}catch(e){}
+  MKRS=[];
+  var als=DB.sel('alertas');
+  for(var i=0;i<als.length;i++){
+    (function(a){
+      if(!a.lat||!a.lon) return;
+      try{
+        var mk=L.marker([a.lat,a.lon],{icon:mkI(a)}).addTo(mapHome);
+        mk.bindPopup('<div style="color:#F2F2F2;font-size:13px;font-weight:700;">'+a.tipo+'</div><div style="color:#999;font-size:11px;">'+a.zona+' · '+TR(a.timestamp)+'</div>');
+        mk.on('click',function(){VD(a.id);});
+        MKRS.push(mk);
+      }catch(e){}
+    })(als[i]);
+  }
+}
+
+function IPM(){
+  cargarL(function(){
+    var a=ACA;
+    var c=a?[a.lat||PF2[0],a.lon||PF2[1]]:PF2;
+    mapPanel=mkMapa('MPL',c,15);
+    if(!mapPanel) return;
+    setTimeout(function(){
+      try{ mapPanel.invalidateSize(true);
+        if(a&&a.lat){
+          L.marker([a.lat,a.lon],{icon:mkI(a)}).addTo(mapPanel).openPopup();
+          var pl=document.getElementById('PLOC'); if(pl) pl.textContent=a.zona+' · '+a.lat.toFixed(4)+', '+a.lon.toFixed(4);
+        }
+      }catch(e){}
+    },500);
+  });
+}
+
+function IMSOS(la,lo){
+  cargarL(function(){
+    var el=document.getElementById('MSOS2'); if(!el) return;
+    el.style.height='120px'; el.style.borderRadius='10px';
+    if(mapSOS){ try{mapSOS.remove();}catch(e){} mapSOS=null; }
+    mapSOS=mkMapa('MSOS2',[la,lo],15);
+    if(!mapSOS) return;
+    setTimeout(function(){
+      try{ mapSOS.invalidateSize(true); L.marker([la,lo],{icon:mkU()}).addTo(mapSOS); }catch(e){}
+    },400);
+  });
+}
+
+function GPS(cb){
+  if(!navigator.geolocation){ cb(PF2[0],PF2[1]); return; }
+  try{
+    navigator.geolocation.getCurrentPosition(
+      function(p){ cb(p.coords.latitude,p.coords.longitude); },
+      function(){ cb(PF2[0],PF2[1]); },
+      {timeout:5000,enableHighAccuracy:false}
+    );
+  }catch(e){ cb(PF2[0],PF2[1]); }
+}
+
+/* ═══ SOS ═══ */
+var STM=null, ACA=null, PTM=null, CDTM=null, CDS=8;
+function SS(e){ try{if(e&&e.preventDefault)e.preventDefault();}catch(ex){} STM=setTimeout(function(){ASOS();},2000); }
+function SE(){ if(STM){clearTimeout(STM);STM=null;} }
+
+function ASOS(){
+  document.getElementById('MSM').classList.add('ON');
+  CDS=8; document.getElementById('CDT').textContent='Quedan: 0:08';
+  GPS(function(la,lo){ IMSOS(la,lo); });
+  CDTM=setInterval(function(){
+    CDS--;
+    var e=document.getElementById('CDT');
+    if(e) e.textContent='Quedan: 0:'+(CDS<10?'0':'')+CDS;
+    if(CDS<=0){clearInterval(CDTM);CONF();}
+  },1000);
+}
+function CANC(){ clearInterval(CDTM); document.getElementById('MSM').classList.remove('ON'); TT('Alerta cancelada'); }
+function CONF(){
+  clearInterval(CDTM);
+  document.getElementById('MSM').classList.remove('ON');
+  GPS(function(la,lo){
+    var nueva=DB.ins('alertas',{tipo:'SOS',descripcion:'Alerta SOS desde la app',zona:SES?SES.zona:'Zona Central',lat:la,lon:lo,estado:'activa',es_anonimo:false,uid:SES?SES.id:'anon',timestamp:Date.now()});
+    ACA=nueva;
+    if(mapPanel){try{mapPanel.remove();}catch(e){} mapPanel=null;}
+    IR('PNL');
+    var pt=document.getElementById('PTYP'); if(pt) pt.textContent='SOS — ALERTA DE SEGURIDAD';
+    IPTR(nueva.timestamp); GRES();
+    if(mapHome) refMK();
+    TT('🆘 SOS enviado','OK');
+  });
+}
+function IPTR(ts){
+  if(PTM) clearInterval(PTM);
+  PTM=setInterval(function(){
+    var s=Math.floor((Date.now()-ts)/1000);
+    var e=document.getElementById('PTMR');
+    if(e) e.textContent=Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);
+  },1000);
+}
+function GRES(){
+  var rl=document.getElementById('RLS'); if(!rl) return; rl.innerHTML='';
+  var ns=['Juan R.','María G.','Pedro S.'], ms=['¿Estás bien? Voy en camino.','Ya llamé al 911.','Alerté al colectivo.'];
+  var i=0, t=setInterval(function(){
+    if(i>=3||VA!=='PNL'){clearInterval(t);return;}
+    var d=document.createElement('div'); d.className='RI';
+    d.innerHTML='<div class="RA">'+ns[i][0]+'</div><div><div class="RN">'+ns[i]+'</div><div class="RM">'+ms[i]+'</div><div class="RH">Hace '+(i*8+9)+'s</div></div>';
+    rl.appendChild(d); i++;
+  },3500);
+}
+function FIN(){
+  if(ACA) DB.upd('alertas',ACA.id,{estado:'resuelta'});
+  if(PTM) clearInterval(PTM); ACA=null;
+  TT('✅ ¡Qué bueno que estás a salvo!','OK'); IR('HM');
+}
+function L911(){ try{ if(typeof AppInventor!=='undefined') AppInventor.setWebViewString('CALL:911'); else window.location.href='tel:911'; }catch(e){ window.location.href='tel:911'; } }
+function LCNT(){
+  var tel=(SES&&SES.contacto_emergencia)?SES.contacto_emergencia.replace(/\D/g,''):'';
+  if(tel){ try{ if(typeof AppInventor!=='undefined') AppInventor.setWebViewString('CALL:'+tel); else window.location.href='tel:'+tel; }catch(e){} }
+  else TT('Sin contacto configurado','ER');
+}
+
+/* ═══ ALERTAS ═══ */
+var FAC='t';
+function SF(f,btn){
+  FAC=f;
+  var bs=document.querySelectorAll('.FB');
+  for(var i=0;i<bs.length;i++) bs[i].classList.remove('ON');
+  btn.classList.add('ON'); RALS();
+}
+function RALS(){
+  var al=DB.sel('alertas').sort(function(a,b){return b.timestamp-a.timestamp;});
+  if(FAC==='z'&&SES){ var r=[]; for(var i=0;i<al.length;i++) if(al[i].zona===SES.zona) r.push(al[i]); al=r; }
+  if(FAC==='a'){ var r=[]; for(var i=0;i<al.length;i++) if(al[i].estado==='activa') r.push(al[i]); al=r; }
+  if(FAC==='r'){ var r=[]; for(var i=0;i<al.length;i++) if(al[i].estado==='resuelta') r.push(al[i]); al=r; }
+  var act=DB.cnt('alertas',{estado:'activa'}), res=DB.cnt('alertas',{estado:'resuelta'}), tot=DB.sel('alertas').length;
+  var e=document.getElementById('ALST');
+  if(e) e.innerHTML='<div class="ST"><div class="SN R">'+act+'</div><div class="SL2">Activas</div></div>'+
+    '<div class="ST"><div class="SN V">'+res+'</div><div class="SL2">Resueltas</div></div>'+
+    '<div class="ST"><div class="SN A">'+tot+'</div><div class="SL2">Total</div></div>';
+  var cont=document.getElementById('ALSL'); if(!cont) return;
+  if(!al.length){ cont.innerHTML='<div class="EMP"><div style="font-size:32px;">🔍</div><div>Sin alertas</div></div>'; return; }
+  var h='';
+  for(var i=0;i<al.length;i++){
+    var a=al[i], bc=a.estado==='activa'?'R':a.estado==='resuelta'?'V':'Y';
+    h+='<div class="AC" onclick="VD(\''+a.id+'\')">'+
+       '<div class="ACTOP"><div class="ACTI">'+a.tipo+'</div><div class="AB '+bc+'">'+a.estado.toUpperCase()+'</div></div>'+
+       '<div class="ACMT">'+(a.es_anonimo?'🔒 Anónimo':'👤 Reportado')+' · '+TR(a.timestamp)+'</div>'+
+       '<div class="ACZN">📍 '+a.zona+'</div>'+
+       (a.descripcion?'<div class="ACDSC">'+a.descripcion.slice(0,100)+(a.descripcion.length>100?'…':'')+'</div>':'')+
+       '</div>';
+  }
+  cont.innerHTML=h;
+}
+function VD(id){
+  var todos=DB.sel('alertas'), a=null;
+  for(var i=0;i<todos.length;i++) if(todos[i].id===id){a=todos[i];break;}
+  if(!a) return;
+  var bc=a.estado==='activa'?'R':'V';
+  document.getElementById('MDT').textContent=a.tipo;
+  document.getElementById('MDB').innerHTML=
+    '<div class="MR"><span class="ML">Estado</span><span class="AB '+bc+'">'+a.estado.toUpperCase()+'</span></div>'+
+    '<div class="MR"><span class="ML">Zona</span><span>'+a.zona+'</span></div>'+
+    '<div class="MR"><span class="ML">Hora</span><span>'+new Date(a.timestamp).toLocaleTimeString('es-VE',{hour:'2-digit',minute:'2-digit'})+'</span></div>'+
+    '<div class="MR"><span class="ML">Reporte</span><span>'+(a.es_anonimo?'Anónimo':'Identificado')+'</span></div>'+
+    (a.descripcion?'<div style="margin-top:9px;font-size:12px;color:#AAAAAA;line-height:1.6;">'+a.descripcion+'</div>':'')+
+    (a.estado==='activa'?'<button class="BRS" onclick="RESM(\''+a.id+'\')">Marcar como Resuelta</button>':'');
+  document.getElementById('OVD').classList.add('ON');
+}
+function RESM(id){
+  DB.upd('alertas',id,{estado:'resuelta'});
+  document.getElementById('OVD').classList.remove('ON');
+  if(VA==='AL') RALS(); if(VA==='HM'){RHM();if(mapHome)refMK();}
+  TT('Alerta resuelta','OK');
+}
+
+/* ═══ REPORTAR ═══ */
+function PREP(){
+  if(SES){ var rz=document.getElementById('RZ'); if(rz) for(var i=0;i<rz.options.length;i++) if(rz.options[i].value===SES.zona){rz.selectedIndex=i;break;} }
+  var rt=document.getElementById('RT'); if(rt) rt.value='';
+  var rd=document.getElementById('RD'); if(rd) rd.value='';
+  var rcc=document.getElementById('RCC'); if(rcc) rcc.textContent='0 / 280';
+  var fz=document.getElementById('FZN');
+  if(fz) fz.innerHTML='<span style="font-size:22px;">📷</span><span>Tocar para adjuntar foto</span><input type="file" id="FZF" accept="image/*" style="display:none;" onchange="PVF(this)">';
+}
+function PVF(inp){
+  var f=inp.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(e){ var z=document.getElementById('FZN'); if(z) z.innerHTML='<img src="'+e.target.result+'"><input type="file" accept="image/*" style="position:absolute;inset:0;opacity:0;" onchange="PVF(this)">'; };
+  r.readAsDataURL(f);
+}
+function ENVR(){
+  var tipo=document.getElementById('RT').value;
+  var desc=(document.getElementById('RD').value||'').trim();
+  var zona=document.getElementById('RZ').value;
+  var anon=document.getElementById('RAn').checked;
+  if(!tipo||!zona){ TT('Selecciona tipo y zona','ER'); return; }
+  var la=PF2[0]+(Math.random()-.5)*.04, lo=PF2[1]+(Math.random()-.5)*.05;
+  DB.ins('alertas',{tipo:tipo,descripcion:desc,zona:zona,lat:la,lon:lo,estado:'activa',es_anonimo:anon,uid:SES?SES.id:'anon',timestamp:Date.now()});
+  if(mapHome) refMK();
+  TT('✅ Reporte enviado','OK');
+  setTimeout(function(){IR('AL');},800);
+}
+
+/* ═══ PERFIL ═══ */
+function RPERF(){
+  if(!SES) return;
+  var ini=SES.nombre.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+  var e;
+  e=document.getElementById('PAV'); if(e) e.textContent=ini;
+  e=document.getElementById('PNM'); if(e) e.textContent=SES.nombre;
+  e=document.getElementById('PZN'); if(e) e.textContent=SES.zona||'—';
+  e=document.getElementById('PIDD'); if(e) e.textContent='ID: '+SES.cedula;
+  e=document.getElementById('PIZO'); if(e) e.textContent=SES.zona||'—';
+  e=document.getElementById('PITEL'); if(e) e.textContent=SES.telefono||'No registrado';
+  e=document.getElementById('PICE'); if(e) e.textContent=SES.contacto_emergencia||'No registrado';
+  e=document.getElementById('PIREP'); if(e) e.textContent=DB.cnt('alertas',{uid:SES.id});
+  e=document.getElementById('PFOZ'); if(e) e.checked=SES.otras_zonas||false;
+}
+function GPRF(){ if(!SES) return; var v=document.getElementById('PFOZ').checked; SES.otras_zonas=v; DB.upd('usuarios',SES.id,{otras_zonas:v}); saveSes(SES); }
+function LOUT(){
+  SR2('aa_ses'); SES=null; PIN=''; UPD();
+  var ids2=['LN','LC']; for(var i=0;i<ids2.length;i++){var el=document.getElementById(ids2[i]);if(el)el.value='';}
+  var lz=document.getElementById('LZ'); if(lz) lz.value='';
+  mostrar('LG'); TT('Sesión cerrada');
+}
+
+/* ═══ TOAST ═══ */
+var TTM=null;
+function TT(msg,tipo){
+  var t=document.getElementById('TST'); if(!t) return;
+  t.textContent=msg;
+  t.className='TS'+(tipo?' '+tipo:'');
+  setTimeout(function(){t.classList.add('ON');},10);
+  if(TTM) clearTimeout(TTM);
+  TTM=setTimeout(function(){t.classList.remove('ON');},3200);
+}
+
+/* ═══ TIEMPO ═══ */
+function TR(ts){
+  var d=Date.now()-ts;
+  if(d<60000) return 'Hace '+Math.floor(d/1000)+'s';
+  if(d<3600000) return 'Hace '+Math.floor(d/60000)+' min';
+  if(d<86400000) return 'Hace '+Math.floor(d/3600000)+'h';
+  return new Date(ts).toLocaleDateString('es-VE');
+}
+
+/* Bridge MIT App Inventor */
+try{ window.AppInventorBridge={ llamar:function(n){try{AppInventor.setWebViewString('CALL:'+n);}catch(e){window.location.href='tel:'+n;}}, compartir:function(la,lo){try{AppInventor.setWebViewString('SHARE:'+la+','+lo);}catch(e){}} }; }catch(e){}
+</script>
+</body>
+</html>
